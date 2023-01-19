@@ -1,6 +1,6 @@
 {
 	"name": "astro-form-actions",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "Forms in Astro made easy",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -24,11 +24,11 @@
 	"license": "MIT",
 	"exports": {
 		".": "./index.js",
-		"./client": "./index.js"
+		"./client": "./client/index.js"
 	},
 	"typesVersions": {
 		"*": {
-			"client": ["client.d.ts"]
+			"client": ["client/index.d.ts"]
 		}
 	},
 	"devDependencies": {

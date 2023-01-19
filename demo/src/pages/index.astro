@@ -1,5 +1,5 @@
 ---
-import { handleFormSubmission, reject } from "astro-form-actions";
+import { handleFormSubmission, reject, resolve } from "astro-form-actions";
 import Form from "../lib/form";
 
 const { response, error, inputValues } = await handleFormSubmission(
@@ -14,11 +14,16 @@ const { response, error, inputValues } = await handleFormSubmission(
 			return reject(400, {
 				message: "invalid input"
 			});
-		Astro.cookies.set("notes", encodeURI(notes));
-		return {};
+		Astro.cookies.set("notes", encodeURI(notes), {
+			path: "/",
+			httpOnly: true
+		});
+		return resolve({});
 	}
 );
 if (response) return response;
+const storedNotes = decodeURI(Astro.cookies.get("notes").value ?? "");
+const notes = inputValues.notes ?? storedNotes;
 ---
 
 <html lang="en">
@@ -32,6 +37,6 @@ if (response) return response;
 	<body class="max-w-md px-4 mx-auto py-12">
 		<h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
 		<h2 class="text-xl font-semibold">Notes</h2>
-		<Form />
+		<Form error={error} notes={notes} />
 	</body>
 </html>
