@@ -9,6 +9,7 @@ yarn add astro-form-actions
 ```
 
 **Documentation: https://github.com/pilcrowOnPaper/astro-form-actions/wiki**
+
 **Demo: https://astro-form-actions.vercel.app**
 
 ### Features
