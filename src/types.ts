@@ -17,36 +17,36 @@ type IgnoreResult = {
 	type: "ignore";
 	response: null;
 	body: null;
-	inputValues: Record<string, any>;
+	inputValues: Record<string, string | undefined>;
 	error: null;
-	redirected: false;
+	redirectLocation: null;
 };
 
 export type ResolvedResult<Body extends {}> = {
 	type: "resolved";
 	response: Response | null;
 	body: Body;
-	inputValues: Record<string, any>;
+	inputValues: Record<string, string | undefined>;
 	error: null;
-	redirected: false;
+	redirectLocation: null;
 };
 
 export type RejectedResult<ErrorData extends {}> = {
 	type: "rejected";
 	response: Response | null;
 	body: null;
-	inputValues: Record<string, any>;
+	inputValues: Record<string, string | undefined>;
 	error: ErrorData;
-	redirected: false;
+	redirectLocation: null;
 };
 
 export type RedirectResult = {
 	type: "redirect";
 	response: Response;
 	body: null;
-	inputValues: Record<string, any>;
+	inputValues: Record<string, string | undefined>;
 	error: null;
-	redirected: true;
+	redirectLocation: string;
 };
 
 export type Result<

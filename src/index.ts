@@ -31,10 +31,6 @@ type ExtractRedirectResponse<Handle extends (...args: any) => any> = Extract<
 >;
 
 export const handleFormSubmission = async <
-	R extends {
-		request: Request;
-		response: AstroGlobal["response"];
-	},
 	Handle extends (
 		formData: FormData
 	) => Promise<
@@ -43,8 +39,15 @@ export const handleFormSubmission = async <
 		| InstanceType<typeof RedirectResponse>
 	>
 >(
-	{ request, response }: R,
-	handle: Handle
+	{
+		request,
+		response
+	}: {
+		request: Request;
+		response: AstroGlobal["response"];
+	},
+	handle: Handle,
+	enabledCSRFProtection = true
 ): Promise<
 	Result<
 		ExtractResolveResponse<Handle>,
@@ -58,15 +61,20 @@ export const handleFormSubmission = async <
 	const isUrlEncodedForm = contentType.includes(
 		"application/x-www-form-urlencoded"
 	);
+	const requestOrigin = clonedRequest.headers.get("origin");
+	const url = new URL(clonedRequest.url);
+	const isValidRequest = enabledCSRFProtection
+		? requestOrigin === url.origin
+		: true;
 	const isValidContentType = isMultipartForm || isUrlEncodedForm;
-	if (clonedRequest.method !== "POST" || !isValidContentType)
+	if (clonedRequest.method !== "POST" || !isValidContentType || !isValidRequest)
 		return {
 			type: "ignore",
 			response: null,
 			body: null,
 			inputValues: {},
 			error: null,
-			redirected: false
+			redirectLocation: null
 		};
 	const formData = new FormData();
 	const acceptHeader = clonedRequest.headers.get("accept");
@@ -92,12 +100,16 @@ export const handleFormSubmission = async <
 	} else {
 		throw new Error("Unexpected value");
 	}
-	const inputValues = Object.fromEntries(formData.entries());
+	const inputValues = Object.fromEntries(
+		[...formData.entries()].filter(
+			(val): val is [string, string] => typeof val[1] === "string"
+		)
+	);
 	const result = (await handle(formData)) as Awaited<ReturnType<Handle>>;
 	if (result instanceof RejectResponse) {
 		const type = "rejected";
 		const body = null;
-		const redirected = false;
+		const redirectLocation = null;
 		const error = result.data;
 		const status = result.status;
 		if (acceptHeader === "application/json") {
@@ -117,7 +129,7 @@ export const handleFormSubmission = async <
 				),
 				inputValues,
 				error,
-				redirected
+				redirectLocation
 			} satisfies RejectedResult<typeof error> as any;
 		}
 		response.status = status;
@@ -127,13 +139,12 @@ export const handleFormSubmission = async <
 			response: null,
 			inputValues,
 			error,
-			redirected
+			redirectLocation
 		} satisfies RejectedResult<typeof error> as any;
 	}
 	if (result instanceof RedirectResponse) {
 		const type = "redirect";
 		const body = null;
-		const redirected = true;
 		const error = null;
 		const redirectLocation = result.location;
 		const redirectResponse =
@@ -161,12 +172,12 @@ export const handleFormSubmission = async <
 			response: redirectResponse,
 			inputValues,
 			error,
-			redirected
+			redirectLocation
 		} satisfies RedirectResult as any;
 	}
 	const body = result;
 	const type = "resolved";
-	const redirected = false;
+	const redirectLocation = null;
 	const error = null;
 	if (acceptHeader === "application/json") {
 		return {
@@ -182,7 +193,7 @@ export const handleFormSubmission = async <
 			),
 			inputValues,
 			error,
-			redirected
+			redirectLocation
 		} satisfies ResolvedResult<typeof body> as any;
 	}
 	return {
@@ -191,7 +202,7 @@ export const handleFormSubmission = async <
 		response: null,
 		inputValues,
 		error,
-		redirected
+		redirectLocation
 	} satisfies ResolvedResult<typeof body> as any;
 };
 
@@ -209,6 +220,8 @@ export const redirect = (status: number, location: string) => {
 	return new RedirectResponse(status, location);
 };
 
-export const resolve = <Body extends {}>(body: Body) => {
-	return new ResolveResponse(body);
+export const resolve = <Body extends {} | undefined>(body?: Body) => {
+	return new ResolveResponse(
+		(body ?? {}) as Body extends undefined ? {} : Body
+	);
 };

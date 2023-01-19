@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.3.0
+
+- Enable CSRF protection by default
+- [Breaking] Remove `redirected` from `handleFormSubmission` result, add `redirectLocation`
+- [Breaking] `inputValues` in `handleFormSubmission` result omits file values
+- Make body parameter for `resolve` optional
+
 ### 0.2.3
 
 - Update README
