@@ -1,4 +1,8 @@
-import type { RedirectResponse, RejectResponse } from "./response.js";
+import type {
+	RedirectResponse,
+	RejectResponse,
+	ResolveResponse
+} from "./response.js";
 
 // for each T as [typeA, typeB]
 // return typeB if typeA is not never
@@ -18,8 +22,8 @@ type IgnoreResult = {
 	redirected: false;
 };
 
-export type SuccessResult<Body extends {}> = {
-	type: "success";
+export type ResolvedResult<Body extends {}> = {
+	type: "resolved";
 	response: Response | null;
 	body: Body;
 	inputValues: Record<string, any>;
@@ -27,8 +31,8 @@ export type SuccessResult<Body extends {}> = {
 	redirected: false;
 };
 
-export type RejectResult<ErrorData extends {}> = {
-	type: "reject";
+export type RejectedResult<ErrorData extends {}> = {
+	type: "rejected";
 	response: Response | null;
 	body: null;
 	inputValues: Record<string, any>;
@@ -46,27 +50,27 @@ export type RedirectResult = {
 };
 
 export type Result<
-	Body extends {} | never,
+	Resolve extends ResolveResponse<any> | never,
 	Reject extends RejectResponse<any> | never,
 	Redirect extends RedirectResponse | never
 > =
 	| ConditionalUnion<
 			[
-				[Body, SuccessResult<Body>],
-				[Reject, RejectResult<Reject["data"]>],
+				[Resolve, ResolvedResult<Resolve["body"]>],
+				[Reject, RejectedResult<Reject["data"]>],
 				[Redirect, RedirectResult]
 			]
 	  >
 	| IgnoreResult;
 
-export type SuccessJsonResult<Body extends {}> = {
-	type: "success";
+export type ResolvedJsonResult<Body extends {}> = {
+	type: "resolved";
 	body: Body;
 	error: null;
 	redirect_location: null;
 };
-export type RejectJsonResult<ErrorData extends {}> = {
-	type: "reject";
+export type RejectedJsonResult<ErrorData extends {}> = {
+	type: "rejected";
 	body: null;
 	error: ErrorData;
 	redirect_location: null;

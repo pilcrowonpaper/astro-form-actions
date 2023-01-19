@@ -1,3 +1,3 @@
 # Astro form actions
 
-Add forms with progressive enhancements into your Astro projects.
+Use progressive form enhancement and handle form submissions in Astro.

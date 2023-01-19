@@ -1,5 +1,5 @@
 export class RejectResponse<ErrorData extends {}> {
-	public readonly type = "reject";
+	public readonly type = "rejected";
 	public status: number;
 	public data: ErrorData;
 	constructor(status: number, data: ErrorData) {
@@ -15,5 +15,13 @@ export class RedirectResponse {
 	constructor(status: number, location: string) {
 		this.status = status;
 		this.location = location;
+	}
+}
+
+export class ResolveResponse<Body extends {}> {
+	public readonly type = "resolved";
+	public body: Body;
+	constructor(body: Body) {
+		this.body = body;
 	}
 }

@@ -1,7 +1,24 @@
 ---
-const s: never | {t: string} = {
-	t: ""
-}
+import { handleFormSubmission, reject } from "astro-form-actions";
+import Form from "../lib/form";
+
+const { response, error, inputValues } = await handleFormSubmission(
+	Astro,
+	async (formData) => {
+		const notes = formData.get("notes") ?? "";
+		if (typeof notes !== "string")
+			return reject(400, {
+				message: "bad input"
+			});
+		if (notes === "invalid")
+			return reject(400, {
+				message: "invalid input"
+			});
+		Astro.cookies.set("notes", encodeURI(notes));
+		return {};
+	}
+);
+if (response) return response;
 ---
 
 <html lang="en">
@@ -12,7 +29,9 @@ const s: never | {t: string} = {
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro form actions demo</title>
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="max-w-md px-4 mx-auto py-12">
+		<h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
+		<h2 class="text-xl font-semibold">Notes</h2>
+		<Form />
 	</body>
 </html>

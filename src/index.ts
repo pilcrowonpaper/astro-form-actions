@@ -3,17 +3,21 @@ import { parse } from "parse-multipart-data";
 import type {
 	RedirectJsonResult,
 	RedirectResult,
-	RejectJsonResult,
-	RejectResult,
+	RejectedJsonResult,
+	RejectedResult,
 	Result,
-	SuccessJsonResult,
-	SuccessResult
+	ResolvedJsonResult,
+	ResolvedResult
 } from "./types.js";
-import { RedirectResponse, RejectResponse } from "./response.js";
+import {
+	RedirectResponse,
+	RejectResponse,
+	ResolveResponse
+} from "./response.js";
 
-type ExtractBodyResult<Handle extends (...args: any) => any> = Exclude<
+type ExtractResolveResponse<Handle extends (...args: any) => any> = Extract<
 	Awaited<ReturnType<Handle>>,
-	InstanceType<typeof RejectResponse> | InstanceType<typeof RedirectResponse>
+	InstanceType<typeof ResolveResponse>
 >;
 
 type ExtractRejectResponse<Handle extends (...args: any) => any> = Extract<
@@ -37,7 +41,7 @@ export const handleFormSubmission = async <
 	handle: Handle
 ): Promise<
 	Result<
-		ExtractBodyResult<Handle>,
+		ExtractResolveResponse<Handle>,
 		ExtractRejectResponse<Handle>,
 		ExtractRedirectResponse<Handle>
 	>
@@ -85,7 +89,7 @@ export const handleFormSubmission = async <
 	const inputValues = Object.fromEntries(formData.entries());
 	const result = (await handle(formData)) as Awaited<ReturnType<Handle>>;
 	if (result instanceof RejectResponse) {
-		const type = "reject";
+		const type = "rejected";
 		const body = null;
 		const redirected = false;
 		const error = result.data;
@@ -100,7 +104,7 @@ export const handleFormSubmission = async <
 						body,
 						error,
 						redirect_location: null
-					} satisfies RejectJsonResult<typeof error>),
+					} satisfies RejectedJsonResult<typeof error>),
 					{
 						status
 					}
@@ -108,7 +112,7 @@ export const handleFormSubmission = async <
 				inputValues,
 				error,
 				redirected
-			} satisfies RejectResult<typeof error> as any;
+			} satisfies RejectedResult<typeof error> as any;
 		}
 		response.status = status;
 		return {
@@ -118,7 +122,7 @@ export const handleFormSubmission = async <
 			inputValues,
 			error,
 			redirected
-		} satisfies RejectResult<typeof error> as any;
+		} satisfies RejectedResult<typeof error> as any;
 	}
 	if (result instanceof RedirectResponse) {
 		const type = "redirect";
@@ -155,7 +159,7 @@ export const handleFormSubmission = async <
 		} satisfies RedirectResult as any;
 	}
 	const body = result;
-	const type = "success";
+	const type = "resolved";
 	const redirected = false;
 	const error = null;
 	if (acceptHeader === "application/json") {
@@ -168,12 +172,12 @@ export const handleFormSubmission = async <
 					body,
 					error,
 					redirect_location: null
-				} satisfies SuccessJsonResult<typeof body>)
+				} satisfies ResolvedJsonResult<typeof body>)
 			),
 			inputValues,
 			error,
 			redirected
-		} satisfies SuccessResult<typeof body> as any;
+		} satisfies ResolvedResult<typeof body> as any;
 	}
 	return {
 		type,
@@ -182,12 +186,12 @@ export const handleFormSubmission = async <
 		inputValues,
 		error,
 		redirected
-	} satisfies SuccessResult<typeof body> as any;
+	} satisfies ResolvedResult<typeof body> as any;
 };
 
 export const reject = <Data extends {} | undefined>(
 	status: number,
-	data: Data
+	data?: Data
 ) =>
 	new RejectResponse(
 		status,
@@ -195,3 +199,5 @@ export const reject = <Data extends {} | undefined>(
 	);
 export const redirect = (status: number, location: string) =>
 	new RedirectResponse(status, location);
+export const resolve = <Body extends {}>(body: Body) =>
+	new ResolveResponse(body);
