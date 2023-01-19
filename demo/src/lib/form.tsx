@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { submitForm } from "astro-form-actions/client";
 
 type ErrorData = {
 	message: string;
@@ -17,9 +18,13 @@ export default ({
 			enctype="multipart/form-data"
 			method="post"
 			class="w-full"
-			onSubmit={async (e) => {}}
+			onSubmit={async (e) => {
+				e.preventDefault()
+				const { error } = await submitForm<{}, ErrorData>(e.currentTarget);
+				setErrorMessage(error?.message ?? null);
+			}}
 		>
-			<p>Typing "invalid" will result in an error</p>
+			<p>Type "invalid" to error, "redirect" to redirect</p>
 			<textarea
 				name="notes"
 				id="notes"
@@ -31,7 +36,7 @@ export default ({
 			<p class="text-red-400">{errorMessage()}</p>
 			<input
 				type="submit"
-				name="Save"
+				value="Save"
 				class="w-full my-2 bg-black text-white py-1.5 cursor-pointer hover:bg-zinc-800"
 			/>
 		</form>

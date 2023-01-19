@@ -1,5 +1,10 @@
 ---
-import { handleFormSubmission, reject, resolve } from "astro-form-actions";
+import {
+	handleFormSubmission,
+	reject,
+	resolve,
+	redirect
+} from "astro-form-actions";
 import Form from "../lib/form";
 
 const { response, error, inputValues } = await handleFormSubmission(
@@ -14,6 +19,11 @@ const { response, error, inputValues } = await handleFormSubmission(
 			return reject(400, {
 				message: "invalid input"
 			});
+		if (notes === "redirect")
+			return redirect(
+				302,
+				"https://github.com/pilcrowOnPaper/astro-form-actions"
+			);
 		Astro.cookies.set("notes", encodeURI(notes), {
 			path: "/",
 			httpOnly: true
@@ -36,7 +46,12 @@ const notes = inputValues.notes ?? storedNotes;
 	</head>
 	<body class="max-w-md px-4 mx-auto py-12">
 		<h1 class="text-3xl font-bold mb-4">Astro form actions</h1>
-		<h2 class="text-xl font-semibold">Notes</h2>
-		<Form error={error} notes={notes} />
+		<p>This form works without JavaScript as well.</p>
+		<h2 class="text-xl font-semibold mt-4 mb-1">Notes</h2>
+		<Form error={error} notes={notes} client:load />
+		<a
+			href="https://github.com/pilcrowOnPaper/astro-form-actions"
+			class="hover:underline text-blue-500">Github repo</a
+		>
 	</body>
 </html>
