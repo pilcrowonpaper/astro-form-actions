@@ -12,6 +12,8 @@ yarn add astro-form-actions
 
 **Demo: https://astro-form-actions.vercel.app**
 
+> Need a library to parse your forms? Check out my other project [Adria](https://github.com/pilcrowOnPaper/adria)!
+
 ### Features
 
 - Simple
