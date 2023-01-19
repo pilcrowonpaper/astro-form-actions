@@ -1,7 +1,7 @@
 import type {
 	RedirectJsonResult,
-	RejectJsonResult,
-	SuccessJsonResult
+	RejectedJsonResult,
+	ResolvedJsonResult
 } from "../types.js";
 
 export const submitForm = async <
@@ -13,8 +13,8 @@ export const submitForm = async <
 		(window.location.href = location)
 ) => {
 	type JsonResult =
-		| SuccessJsonResult<Body>
-		| RejectJsonResult<ErrorData>
+		| ResolvedJsonResult<Body>
+		| RejectedJsonResult<ErrorData>
 		| RedirectJsonResult;
 	const formData = new FormData(element);
 	const response = await fetch(element.action, {

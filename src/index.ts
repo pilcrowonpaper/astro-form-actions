@@ -192,12 +192,17 @@ export const handleFormSubmission = async <
 export const reject = <Data extends {} | undefined>(
 	status: number,
 	data?: Data
-) =>
-	new RejectResponse(
+) => {
+	return new RejectResponse(
 		status,
 		(data ?? {}) as Data extends undefined ? {} : Data
 	);
-export const redirect = (status: number, location: string) =>
-	new RedirectResponse(status, location);
-export const resolve = <Body extends {}>(body: Body) =>
-	new ResolveResponse(body);
+};
+
+export const redirect = (status: number, location: string) => {
+	return new RedirectResponse(status, location);
+};
+
+export const resolve = <Body extends {}>(body: Body) => {
+	return new ResolveResponse(body);
+};
