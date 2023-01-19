@@ -8,6 +8,8 @@ pnpm add astro-form-actions
 yarn add astro-form-actions
 ```
 
+**Demo: https://astro-form-actions.vercel.app**
+
 ### Features
 
 - Simple
