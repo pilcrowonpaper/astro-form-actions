@@ -35,7 +35,13 @@ export const handleFormSubmission = async <
 		request: Request;
 		response: AstroGlobal["response"];
 	},
-	Handle extends (formData: FormData) => Promise<Record<string, any>>
+	Handle extends (
+		formData: FormData
+	) => Promise<
+		| InstanceType<typeof ResolveResponse>
+		| InstanceType<typeof RejectResponse>
+		| InstanceType<typeof RedirectResponse>
+	>
 >(
 	{ request, response }: R,
 	handle: Handle
