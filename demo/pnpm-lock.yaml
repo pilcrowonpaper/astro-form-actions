@@ -5,7 +5,6 @@ specifiers:
   '@astrojs/tailwind': ^2.1.3
   '@astrojs/vercel': ^2.4.0
   astro: ^1.9.0
-  astro-form-actions: ^0.3.x
   solid-js: ^1.4.3
   tailwindcss: ^3.0.24
 
@@ -14,7 +13,6 @@ dependencies:
   '@astrojs/tailwind': 2.1.3_tailwindcss@3.2.4
   '@astrojs/vercel': 2.4.0
   astro: 1.9.2
-  astro-form-actions: 0.3.1_astro@1.9.2
   solid-js: 1.6.9
   tailwindcss: 3.2.4
 
@@ -814,14 +812,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       tslib: 2.4.1
-    dev: false
-
-  /astro-form-actions/0.3.1_astro@1.9.2:
-    resolution: {integrity: sha512-+Jhi6g35kom8sdMpwz1gHq29auMTdFkPZxB84gJm5IX9RZNbv3IjcJePDBZ7N2SO7M6lh3aCSiZxX6+Dhyml+g==}
-    peerDependencies:
-      astro: 1.x
-    dependencies:
-      astro: 1.9.2
     dev: false
 
   /astro/1.9.2:
