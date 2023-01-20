@@ -1,6 +1,6 @@
 {
 	"name": "astro-form-actions",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Forms in Astro made easy",
 	"main": "index.js",
 	"types": "index.d.ts",
@@ -32,15 +32,11 @@
 		}
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.18",
 		"astro": "^1.9.2",
 		"prettier": "^2.8.3",
 		"shx": "^0.3.4",
 		"ts-node": "^10.9.1",
 		"typescript": "^4.9.4"
-	},
-	"dependencies": {
-		"parse-multipart-data": "^1.5.0"
 	},
 	"peerDependencies": {
 		"astro": "1.x"

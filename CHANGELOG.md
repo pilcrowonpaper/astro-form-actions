@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.3.1
+
+- Remove `parse-multipart-data` dependency
+- Remove Node dependencies
+
 ### 0.3.0
 
 - Enable CSRF protection by default

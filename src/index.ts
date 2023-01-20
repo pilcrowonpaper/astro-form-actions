@@ -1,5 +1,5 @@
 import type { AstroGlobal } from "astro";
-import { parse } from "parse-multipart-data";
+import { parse } from "./multipart-form";
 import type {
 	RedirectJsonResult,
 	RedirectResult,
@@ -80,16 +80,15 @@ export const handleFormSubmission = async <
 	const acceptHeader = clonedRequest.headers.get("accept");
 	if (isMultipartForm) {
 		const boundary = contentType.replace("multipart/form-data; boundary=", "");
-		const parts = parse(
-			Buffer.from(await clonedRequest.arrayBuffer()),
-			boundary
-		);
+		const bodyArrayBuffer = await clonedRequest.arrayBuffer();
+		const parts = parse(new Uint8Array(bodyArrayBuffer), boundary);
 		parts.forEach((value) => {
 			const isFile = !!value.type;
 			if (isFile) {
 				formData.append(value.name!, new Blob([value.data]), value.filename!);
 			} else {
-				formData.append(value.name!, value.data.toString());
+				const textDecoder = new TextDecoder();
+				formData.append(value.name!, textDecoder.decode(value.data));
 			}
 		});
 	} else if (isUrlEncodedForm) {

@@ -11,6 +11,7 @@ const { response, error, inputValues } = await handleFormSubmission(
 	Astro,
 	async (formData) => {
 		const notes = formData.get("notes") ?? "";
+		console.log("s", notes);
 		if (typeof notes !== "string")
 			return reject(400, {
 				message: "bad input"
