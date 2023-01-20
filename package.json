@@ -28,10 +28,13 @@
 	},
 	"typesVersions": {
 		"*": {
-			"client": ["client/index.d.ts"]
+			"client": [
+				"client/index.d.ts"
+			]
 		}
 	},
 	"devDependencies": {
+		"@types/node": "^18.11.18",
 		"astro": "^1.9.2",
 		"prettier": "^2.8.3",
 		"shx": "^0.3.4",
