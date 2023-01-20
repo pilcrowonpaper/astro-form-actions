@@ -1,10 +1,5 @@
 ---
-import {
-	handleFormSubmission,
-	reject,
-	resolve,
-	redirect
-} from "astro-form-actions";
+import { handleFormSubmission, reject, resolve, redirect } from "../../../src";
 import Form from "../lib/form";
 
 const { response, error, inputValues } = await handleFormSubmission(

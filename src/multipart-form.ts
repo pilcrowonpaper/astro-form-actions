@@ -17,12 +17,17 @@ type Part = {
 	part: number[];
 };
 
-type Input = {
-	filename?: string;
-	name?: string;
-	type: string;
-	data: Uint8Array;
-};
+type Input =
+	| {
+			name: string;
+			data: Uint8Array;
+	  }
+	| {
+			type: string;
+			filename: string;
+			name: string;
+			data: Uint8Array;
+	  };
 
 enum ParsingState {
 	INIT,
@@ -31,10 +36,10 @@ enum ParsingState {
 	READING_PART_SEPARATOR
 }
 
-export function parse(
+export const parse = (
 	multipartBodyBuffer: Uint8Array,
 	boundary: string
-): Input[] {
+): Input[] => {
 	let lastline = "";
 	let contentDispositionHeader = "";
 	let contentTypeHeader = "";
@@ -107,104 +112,31 @@ export function parse(
 		}
 	}
 	return allParts;
-}
+};
 
-//  read the boundary from the content-type header sent by the http client
-//  this value may be similar to:
-//  'multipart/form-data; boundary=----WebKitFormBoundaryvm5A9tzU1ONaGP5B',
-export function getBoundary(header: string): string {
-	const items = header.split(";");
-	if (items) {
-		for (let i = 0; i < items.length; i++) {
-			const item = new String(items[i]).trim();
-			if (item.indexOf("boundary") >= 0) {
-				const k = item.split("=");
-				return new String(k[1]).trim().replace(/^["']|["']$/g, "");
-			}
-		}
-	}
-	return "";
-}
-
-export function DemoData(): { body: Uint8Array; boundary: string } {
-	let body = "trash1\r\n";
-	body += "------WebKitFormBoundaryvef1fLxmoUdYZWXp\r\n";
-	body += "Content-Type: text/plain\r\n";
-	body +=
-		'Content-Disposition: form-data; name="uploads[]"; filename="A.txt"\r\n';
-	body += "\r\n";
-	body += "@11X";
-	body += "111Y\r\n";
-	body += "111Z\rCCCC\nCCCC\r\nCCCCC@\r\n\r\n";
-	body += "------WebKitFormBoundaryvef1fLxmoUdYZWXp\r\n";
-	body += "Content-Type: text/plain\r\n";
-	body +=
-		'Content-Disposition: form-data; name="uploads[]"; filename="B.txt"\r\n';
-	body += "\r\n";
-	body += "@22X";
-	body += "222Y\r\n";
-	body += "222Z\r222W\n2220\r\n666@\r\n";
-	body += "------WebKitFormBoundaryvef1fLxmoUdYZWXp\r\n";
-	body += 'Content-Disposition: form-data; name="input1"\r\n';
-	body += "\r\n";
-	body += "value1\r\n";
-	body += "------WebKitFormBoundaryvef1fLxmoUdYZWXp--\r\n";
-	const textEncoder = new TextEncoder();
-	const bodyBuffer = textEncoder.encode(body);
-	return {
-		body: bodyBuffer,
-		boundary: "----WebKitFormBoundaryvef1fLxmoUdYZWXp"
-	};
-}
-
-function process(part: Part): Input {
+const process = (part: Part): Input => {
 	// will transform this object:
 	// { header: 'Content-Disposition: form-data; name="uploads[]"; filename="A.txt"',
 	// info: 'Content-Type: text/plain',
 	// part: 'AAAABBBB' }
 	// into this one:
 	// { filename: 'A.txt', type: 'text/plain', data: <Buffer 41 41 41 41 42 42 42 42> }
-	const obj = function (str: string) {
-		const k = str.split("=");
-		const a = k[0].trim();
-
-		const b = JSON.parse(k[1].trim());
-		const o = {};
-		Object.defineProperty(o, a, {
-			value: b,
-			writable: true,
-			enumerable: true,
-			configurable: true
-		});
-		return o;
-	};
 	const header = part.contentDispositionHeader.split(";");
-
 	const filenameData = header[2];
-	let input = {};
 	if (filenameData) {
-		input = obj(filenameData);
+		const getFileName = () => {
+			return JSON.parse(filenameData.split("=")[1].trim()) as string;
+		};
 		const contentType = part.contentTypeHeader.split(":")[1].trim();
-		Object.defineProperty(input, "type", {
-			value: contentType,
-			writable: true,
-			enumerable: true,
-			configurable: true
-		});
+		return {
+			type: contentType,
+			name: header[1].split("=")[1].replace(/"/g, ""),
+			data: new Uint8Array(part.part),
+			filename: getFileName()
+		};
 	}
-	// always process the name field
-	Object.defineProperty(input, "name", {
-		value: header[1].split("=")[1].replace(/"/g, ""),
-		writable: true,
-		enumerable: true,
-		configurable: true
-	});
-
-	Object.defineProperty(input, "data", {
-		value: new Uint8Array(part.part),
-		writable: true,
-		enumerable: true,
-		configurable: true
-	});
-	return input as Input;
-}
+	return {
+		name: header[1].split("=")[1].replace(/"/g, ""),
+		data: new Uint8Array(part.part)
+	};
+};

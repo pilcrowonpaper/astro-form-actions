@@ -83,7 +83,7 @@ export const handleFormSubmission = async <
 		const bodyArrayBuffer = await clonedRequest.arrayBuffer();
 		const parts = parse(new Uint8Array(bodyArrayBuffer), boundary);
 		parts.forEach((value) => {
-			const isFile = !!value.type;
+			const isFile = "type" in value;
 			if (isFile) {
 				formData.append(value.name!, new Blob([value.data]), value.filename!);
 			} else {
