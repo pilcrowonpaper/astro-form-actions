@@ -93,3 +93,7 @@ export default () => {
 	);
 };
 ```
+
+## Other
+
+Parts of the library is from https://github.com/nachomazzara/parse-multipart-data.
