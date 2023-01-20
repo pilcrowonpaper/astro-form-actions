@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.3.2
+
+- Remove unused code
+
 ### 0.3.1
 
 - Remove `parse-multipart-data` dependency

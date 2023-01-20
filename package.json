@@ -1,6 +1,6 @@
 {
 	"name": "astro-form-actions",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Forms in Astro made easy",
 	"main": "index.js",
 	"types": "index.d.ts",

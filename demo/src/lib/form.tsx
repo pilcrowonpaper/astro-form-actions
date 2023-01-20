@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { submitForm } from "../../../src/client";
+import { submitForm } from "astro-form-actions/client";
 
 type ErrorData = {
 	message: string;
