@@ -2,6 +2,7 @@
 
 ### 0.4.0
 
+- [Breaking] Rename `handleFormSubmission()` to `action()`
 - [Breaking] Rename `result.redirect_location` to `result.redirectLocation` for return type of `submitForm()`
 
 ### 0.3.2
