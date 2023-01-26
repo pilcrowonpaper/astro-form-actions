@@ -1,16 +1,11 @@
 ---
-import {
-	handleFormSubmission,
-	reject,
-	resolve,
-	redirect
-} from "astro-form-actions";
+import { action, reject, resolve, redirect } from "astro-form-actions";
 import Form from "../lib/form";
 
-const { response, error, inputValues } = await handleFormSubmission(
+const { response, error, inputValues } = await action(
 	Astro,
 	async (formData) => {
-		const notes = formData.get("notes") ?? "";
+		const notes = formData.get("notes")
 		if (typeof notes !== "string")
 			return reject(400, {
 				message: "bad input"

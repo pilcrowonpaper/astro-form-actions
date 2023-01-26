@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.1
+
+- [Fix] Proper types for `result.inputValues` for `action()`
+
 ### 0.4.0
 
 - [Breaking] Rename `handleFormSubmission()` to `action()`

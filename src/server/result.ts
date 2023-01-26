@@ -5,10 +5,12 @@ import {
 	Result
 } from "../result";
 
+type InputValues = Record<string, string | undefined>;
+
 type ServerResult = Omit<Result, "type"> & {
 	type: Result["type"] | "ignore";
 	response: null | Response;
-	inputValues: Record<string, string | undefined>;
+	inputValues: InputValues;
 };
 
 export class ServerIgnoreResult implements ServerResult {
@@ -18,7 +20,7 @@ export class ServerIgnoreResult implements ServerResult {
 	public readonly redirectLocation = null;
 	public readonly response = null;
 	public readonly inputValues;
-	constructor({ inputValues }: { inputValues: {} }) {
+	constructor({ inputValues }: { inputValues: InputValues }) {
 		this.inputValues = inputValues;
 	}
 }
@@ -35,7 +37,7 @@ export class ServerResolvedResult<Body extends {}>
 			inputValues
 		}: {
 			body: Body;
-			inputValues: {};
+			inputValues: InputValues;
 		},
 		response: Response | null
 	) {
@@ -57,7 +59,7 @@ export class ServerRejectedResult<ErrorData extends {}>
 			inputValues
 		}: {
 			errorData: ErrorData;
-			inputValues: {};
+			inputValues: InputValues;
 		},
 		response: Response | null
 	) {
@@ -79,7 +81,7 @@ export class ServerRedirectResult
 			inputValues
 		}: {
 			redirectLocation: string;
-			inputValues: {};
+			inputValues: InputValues;
 		},
 		response: Response
 	) {

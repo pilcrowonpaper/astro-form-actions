@@ -4,7 +4,7 @@ export class RejectResponse<ErrorData extends {}> {
 	public data: ErrorData;
 	constructor(status: number, data: ErrorData) {
 		this.status = status;
-		this.data = data ?? {};
+		this.data = data;
 	}
 }
 

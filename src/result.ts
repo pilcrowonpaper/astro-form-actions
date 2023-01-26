@@ -1,7 +1,7 @@
 export type Result = {
 	type: "resolved" | "rejected" | "redirect";
-	body: null | {};
-	error: null | {};
+	body: null | Record<string, any>;
+	error: null | Record<string, any>;
 	redirectLocation: null | string;
 };
 
@@ -15,9 +15,7 @@ export class ResolvedResult<Body extends {}> implements Result {
 	}
 }
 
-export class RejectedResult<ErrorData extends {}>
-	implements Result
-{
+export class RejectedResult<ErrorData extends {}> implements Result {
 	public readonly type = "rejected";
 	public readonly body = null;
 	public readonly error: ErrorData;
