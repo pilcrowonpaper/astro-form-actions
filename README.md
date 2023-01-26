@@ -1,6 +1,6 @@
 # Astro form actions
 
-Use progressive form enhancement and handle form submissions in Astro.
+Use progressive form enhancement and handle form submissions in Astro. This library only uses native Web APIs and can be used in any runtime.
 
 ```
 npm i astro-form-actions
