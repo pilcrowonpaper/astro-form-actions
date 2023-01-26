@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.0
+
+- [Breaking] Rename `result.redirect_location` to `result.redirectLocation` for return type of `submitForm()`
+
 ### 0.3.2
 
 - Remove unused code

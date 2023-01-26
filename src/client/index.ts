@@ -1,8 +1,8 @@
 import type {
-	RedirectJsonResult,
-	RejectedJsonResult,
-	ResolvedJsonResult
-} from "../types.js";
+	RedirectResult,
+	RejectedResult,
+	ResolvedResult
+} from "../result.js";
 
 export const submitForm = async <
 	Body extends {} = {},
@@ -12,10 +12,10 @@ export const submitForm = async <
 	handleRedirect: (location: string) => void = (location) =>
 		(window.location.href = location)
 ) => {
-	type JsonResult =
-		| ResolvedJsonResult<Body>
-		| RejectedJsonResult<ErrorData>
-		| RedirectJsonResult;
+	type ClientResult =
+		| ResolvedResult<Body>
+		| RejectedResult<ErrorData>
+		| RedirectResult;
 	const formData = new FormData(element);
 	const response = await fetch(element.action, {
 		method: element.method,
@@ -24,9 +24,9 @@ export const submitForm = async <
 			accept: "application/json"
 		}
 	});
-	const result = (await response.json()) as JsonResult;
+	const result = (await response.json()) as ClientResult;
 	if (result.type === "redirect") {
-		handleRedirect(result.redirect_location);
+		handleRedirect(result.redirectLocation);
 	}
 	return result;
 };
